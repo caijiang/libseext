@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
- *
  * @author luffy
  */
 public class IOUtils {

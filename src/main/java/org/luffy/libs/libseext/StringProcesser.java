@@ -7,16 +7,14 @@
 package org.luffy.libs.libseext;
 
 /**
- *
  * @author luffy
  */
 public interface StringProcesser {
-    
+
     /**
-     * 
      * @param str
      * @return true 时停止
      **/
     boolean processString(String str);
-    
+
 }

@@ -23,9 +23,8 @@ public class CollectionUtils {
     }
 
     /**
-     *
      * @param data 元素集合
-     * @param <T> 类型
+     * @param <T>  类型
      * @return HashSet实例，包含所有元素
      */
     public static <T> Set<T> mutliSet(T... data) {
