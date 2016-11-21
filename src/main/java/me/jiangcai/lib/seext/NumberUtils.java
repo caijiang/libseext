@@ -1,11 +1,15 @@
 package me.jiangcai.lib.seext;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 /**
+ * hash62是一种建议哈希算法,将阿拉伯数字,大小写英文作为进制。
+ *
  * @author CJ
  * @since 1.3
  */
+@SuppressWarnings("WeakerAccess")
 public class NumberUtils {
 
     /**
@@ -25,14 +29,104 @@ public class NumberUtils {
             'U', 'V', 'W', 'X', 'Y', 'Z'
     };
 
+    /**
+     * @param x
+     * @return HASH62格式
+     */
     public static String hash62(int x) {
         return hash62(Integer.toUnsignedLong(x));
     }
 
+    /**
+     * @param uuid
+     * @return HASH62格式
+     */
     public static String hash62(UUID uuid) {
+        return hash62(uuid, false);
+    }
+
+    /**
+     * @param uuid
+     * @param restored 可还原的HASH62格式
+     * @return HASH62格式
+     */
+    public static String hash62(UUID uuid, boolean restored) {
         StringBuilder buffer = hashLong(uuid.getMostSignificantBits(), 62);
+        if (restored)
+            buffer.append('-');
         buffer.append(hashLong(uuid.getLeastSignificantBits(), 62));
         return buffer.toString();
+    }
+
+    /**
+     * @param uuid
+     * @return HASH62格式
+     * @see UUID#toString()
+     */
+    public static String hash62(String uuid, boolean restored) {
+        // 8 4 4 4
+        try {
+            return hash62(UUID.fromString(uuid), restored);
+        } catch (IllegalArgumentException ignored) {
+            StringBuilder stringBuilder = new StringBuilder(uuid);
+            stringBuilder.insert(8, '-');
+            stringBuilder.insert(8 + 4 + 1, '-');
+            stringBuilder.insert(8 + 4 + 4 + 2, '-');
+            stringBuilder.insert(8 + 4 + 4 + 4 + 3, '-');
+            return hash62(UUID.fromString(stringBuilder.toString()), restored);
+        }
+    }
+
+    /**
+     * @param hash HASH62格式
+     * @return UUID
+     * @see #hash62(UUID, boolean)
+     */
+    public static UUID hash62ToUUID(String hash) {
+        String[] strings = hash.split("-");
+        long m = recoverHash62(strings[0]);
+        long l = recoverHash62(strings[1]);
+        return new UUID(m, l);
+    }
+
+    public static long recoverHash62(String string) {
+        return from(string, digits);
+    }
+
+    private static long from(String hash, char[] chars) {
+        long val = 0;
+        char[] hashChars = hash.toCharArray();
+
+        for (int i = 0; i < hashChars.length; i++) {
+            int n = hashChars.length - i - 1;
+            int index = indexOf(chars, hashChars[i]);
+            long x = (long) (Math.pow(chars.length, n) * (long) index);
+            val = val + x;
+        }
+
+        BigInteger base = BigInteger.valueOf(chars.length);
+        BigInteger current = BigInteger.ZERO;
+        for (int i = 0; i < hashChars.length; i++) {
+            int n = hashChars.length - i - 1;
+            int index = indexOf(chars, hashChars[i]);
+            BigInteger toX = base.pow(n).multiply(BigInteger.valueOf(index));
+            current = current.add(toX);
+        }
+        try {
+            return Long.parseLong(current.toString());
+        } catch (NumberFormatException ignored) {
+            return Long.parseUnsignedLong(current.toString());
+        }
+//        System.out.println(current);
+//        return val;
+    }
+
+    private static int indexOf(char[] chars, char c) {
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == c)
+                return i;
+        }
+        return -1;
     }
 
     private static StringBuilder hashLong(long input, int radix) {
@@ -49,15 +143,25 @@ public class NumberUtils {
     private static StringBuilder longToNBuf(long l, char[] chars) {
         int upgrade = chars.length;
         StringBuilder result = new StringBuilder();
-        int last;
-        l = Math.abs(l);
-        while (l > 0) {
-            last = (int) (l % upgrade);
-            result.append(chars[last]);
-            l /= upgrade;
+        BigInteger current = new BigInteger(Long.toUnsignedString(l));
+        //        BigInteger current = BigInteger.valueOf(Math.abs(l));
+
+        BigInteger number = BigInteger.valueOf(upgrade);
+        while (current.compareTo(BigInteger.ZERO) > 0) {
+            final int figure = current.remainder(number).intValue();
+            result.insert(0, chars[figure]);
+            current = current.divide(number);
         }
+
+//        l = Math.abs(l);
+//        while (l > 0) {
+//            int last = (int) (l % upgrade);
+//            result.insert(0, chars[last]);
+//            l /= upgrade;
+//        }
         return result;
     }
+
 
     public static String hash62(long input) {
         return hashLong(input, 62).toString();
