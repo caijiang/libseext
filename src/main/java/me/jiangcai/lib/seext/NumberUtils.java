@@ -1,6 +1,8 @@
 package me.jiangcai.lib.seext;
 
 import java.math.BigInteger;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -160,6 +162,30 @@ public class NumberUtils {
 //            l /= upgrade;
 //        }
         return result;
+    }
+
+    /**
+     * 典型的百分比显示一个数字；如有必要将最多保留2位小数
+     *
+     * @param number 数字
+     * @return 形如20%,11.15%
+     * @since 1.3.2
+     */
+    public static String normalPercentage(Number number) {
+        return normalPercentage(number, Locale.CHINA);
+    }
+
+    /**
+     * 典型的百分比显示一个数字；如有必要将最多保留2位小数
+     *
+     * @param number 数字
+     * @return 形如20%,11.15%
+     * @since 1.3.2
+     */
+    public static String normalPercentage(Number number, Locale locale) {
+        final NumberFormat percentInstance = NumberFormat.getPercentInstance(locale);
+        percentInstance.setMaximumFractionDigits(2);
+        return percentInstance.format(number);
     }
 
 

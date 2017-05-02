@@ -2,6 +2,7 @@ package me.jiangcai.lib.seext;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Random;
 import java.util.UUID;
 
@@ -77,6 +78,16 @@ public class NumberUtilsTest {
             String hash = NumberUtils.hash62(random.nextLong());
             doHash(hash);
         }
+    }
+
+    @Test
+    public void normalPercentage() {
+        final double number = random.nextDouble();
+        System.out.println(number);
+        System.out.println(NumberUtils.normalPercentage(number));
+        BigDecimal bigDecimal = new BigDecimal("0.2");
+        System.out.println(bigDecimal);
+        System.out.println(NumberUtils.normalPercentage(bigDecimal));
     }
 
 }
