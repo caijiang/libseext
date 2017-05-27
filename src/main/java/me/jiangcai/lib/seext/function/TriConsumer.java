@@ -4,18 +4,19 @@ import java.util.Objects;
 
 /**
  * @author CJ
- * @since 1.3.3
+ * @since 1.3.4
  */
 @FunctionalInterface
-public interface AllBiConsumer<T, U> {
+public interface TriConsumer<T, U, X> {
 
     /**
      * Performs this operation on the given arguments.
      *
      * @param t the first input argument
      * @param u the second input argument
+     * @param x the third input argument
      */
-    void accept(T t, U u) throws Exception;
+    void accept(T t, U u, X x);
 
     /**
      * Returns a composed {@code BiConsumer} that performs, in sequence, this
@@ -29,12 +30,13 @@ public interface AllBiConsumer<T, U> {
      * operation followed by the {@code after} operation
      * @throws NullPointerException if {@code after} is null
      */
-    default AllBiConsumer<T, U> andThen(AllBiConsumer<? super T, ? super U> after) {
+    default TriConsumer<T, U, X> andThen(java.util.function.BiConsumer<? super T, ? super U> after) {
         Objects.requireNonNull(after);
 
-        return (l, r) -> {
-            accept(l, r);
+        return (l, r, x) -> {
+            accept(l, r, x);
             after.accept(l, r);
         };
     }
 }
+

@@ -1,22 +1,24 @@
 package me.jiangcai.lib.seext.function;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author CJ
- * @since 1.3.3
+ * @since 1.3.4
  */
 @FunctionalInterface
-public interface AllBiFunction<T, U, R> {
+public interface TriFunction<T, U, X, R> {
 
     /**
      * Applies this function to the given arguments.
      *
      * @param t the first function argument
      * @param u the second function argument
+     * @param x the third function argument
      * @return the function result
      */
-    R apply(T t, U u) throws Exception;
+    R apply(T t, U u, X x);
 
     /**
      * Returns a composed function that first applies this function to
@@ -31,8 +33,9 @@ public interface AllBiFunction<T, U, R> {
      * applies the {@code after} function
      * @throws NullPointerException if after is null
      */
-    default <V> AllBiFunction<T, U, V> andThen(AllFunction<? super R, ? extends V> after) {
+    default <V> TriFunction<T, U, X, V> andThen(Function<? super R, ? extends V> after) {
         Objects.requireNonNull(after);
-        return (T t, U u) -> after.apply(apply(t, u));
+        return (T t, U u, X x) -> after.apply(apply(t, u, x));
     }
+
 }

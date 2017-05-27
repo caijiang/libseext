@@ -4,20 +4,21 @@ import java.util.Objects;
 
 /**
  * @author CJ
- * @since 1.3.3
+ * @since 1.3.4
  */
 @FunctionalInterface
-public interface AllBiPredicate<T, U> {
+public interface TriPredicate<T, U, X> {
 
     /**
      * Evaluates this predicate on the given arguments.
      *
      * @param t the first input argument
      * @param u the second input argument
+     * @param x the third input argument
      * @return {@code true} if the input arguments match the predicate,
      * otherwise {@code false}
      */
-    boolean test(T t, U u) throws Exception;
+    boolean test(T t, U u, X x);
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical
@@ -35,9 +36,9 @@ public interface AllBiPredicate<T, U> {
      * AND of this predicate and the {@code other} predicate
      * @throws NullPointerException if other is null
      */
-    default AllBiPredicate<T, U> and(AllBiPredicate<? super T, ? super U> other) {
+    default TriPredicate<T, U, X> and(TriPredicate<? super T, ? super U, ? super X> other) {
         Objects.requireNonNull(other);
-        return (T t, U u) -> test(t, u) && other.test(t, u);
+        return (T t, U u, X x) -> test(t, u, x) && other.test(t, u, x);
     }
 
     /**
@@ -47,8 +48,8 @@ public interface AllBiPredicate<T, U> {
      * @return a predicate that represents the logical negation of this
      * predicate
      */
-    default AllBiPredicate<T, U> negate() {
-        return (T t, U u) -> !test(t, u);
+    default TriPredicate<T, U, X> negate() {
+        return (T t, U u, X x) -> !test(t, u, x);
     }
 
     /**
@@ -67,8 +68,9 @@ public interface AllBiPredicate<T, U> {
      * OR of this predicate and the {@code other} predicate
      * @throws NullPointerException if other is null
      */
-    default AllBiPredicate<T, U> or(AllBiPredicate<? super T, ? super U> other) {
+    default TriPredicate<T, U, X> or(TriPredicate<? super T, ? super U, ? super X> other) {
         Objects.requireNonNull(other);
-        return (T t, U u) -> test(t, u) || other.test(t, u);
+        return (T t, U u, X x) -> test(t, u, x) || other.test(t, u, x);
     }
 }
+

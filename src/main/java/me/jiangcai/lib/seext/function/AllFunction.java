@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * @author CJ
+ * @since 1.3.3
  */
 @FunctionalInterface
 public interface AllFunction<T, R> {
