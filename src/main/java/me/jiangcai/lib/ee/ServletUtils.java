@@ -9,6 +9,29 @@ import javax.servlet.http.HttpServletRequest;
 public class ServletUtils {
 
     /**
+     * @param httpRequest 请求
+     * @return 当前请求所在的contextUrl Builder；绝不是/结尾的
+     * @since 1.3.8
+     */
+    public static StringBuilder buildContextUrl(HttpServletRequest httpRequest) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(httpRequest.getScheme());
+        sb.append("://");
+        sb.append(httpRequest.getServerName());
+        // 负数 或者433 或者80 就省略
+        if (httpRequest.getServerPort() <= 0
+                || (httpRequest.isSecure() && httpRequest.getServerPort() == 433)
+                || (!httpRequest.isSecure() && httpRequest.getServerPort() == 80)
+                )
+            ;
+        else {
+            sb.append(":").append(httpRequest.getServerPort());
+        }
+        sb.append(httpRequest.getContextPath());
+        return sb;
+    }
+
+    /**
      * 从请求中获取客户端IP地址
      * https://zh.wikipedia.org/wiki/X-Forwarded-For
      *
