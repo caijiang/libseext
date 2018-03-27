@@ -45,7 +45,16 @@ public class ServletUtilsTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("www.baidu.com");
         request.setContextPath("");
+        request.addHeader("X-Forwarded-For", "125.119.83.76, 10.255.0.2");
         return request;
+    }
+
+    @Test
+    public void clientIpAddress() {
+        MockHttpServletRequest request = createMockHttpServletRequest();
+        request.addHeader("X-Forwarded-For", "125.119.83.76, 10.255.0.2");
+        assertThat(ServletUtils.clientIpAddress(request))
+                .isEqualTo("125.119.83.76");
     }
 
 }

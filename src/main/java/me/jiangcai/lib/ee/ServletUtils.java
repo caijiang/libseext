@@ -41,6 +41,9 @@ public class ServletUtils {
     public static String clientIpAddress(HttpServletRequest request) {
 // X-Forwarded-For: client1, proxy1, proxy2
         // 暂时表示信任这个来源
+        // TODO: 如何选择相信，请求X-Real-IP 必须跟最后一位保持一致。
+        // 125.119.83.76, 10.255.0.2
+        // x-real-ip 10.255.0.2
         String xff = request.getHeader("X-Forwarded-For");
         if (xff != null && xff.length() > 0) {
             String[] ips = xff.trim().split(",");
