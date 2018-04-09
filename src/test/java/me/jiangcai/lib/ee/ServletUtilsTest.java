@@ -57,4 +57,56 @@ public class ServletUtilsTest {
                 .isEqualTo("125.119.83.76");
     }
 
+    @Test
+    public void isPrivateIPAddress() {
+        assertThat(
+                ServletUtils.isPrivateIPAddress("127.0.0.1")
+        )
+                .isTrue();
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("127.0.0.2")
+        )
+                .isFalse();
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("80.0.0.2")
+        )
+                .isFalse();
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("10.0.0.2")
+        )
+                .isTrue();
+
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("172.15.0.2")
+        )
+                .isFalse();
+        assertThat(
+                ServletUtils.isPrivateIPAddress("172.16.0.2")
+        )
+                .isTrue();
+        assertThat(
+                ServletUtils.isPrivateIPAddress("172.31.0.2")
+        )
+                .isTrue();
+        assertThat(
+                ServletUtils.isPrivateIPAddress("172.32.0.2")
+        )
+                .isFalse();
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("192.167.0.2")
+        )
+                .isFalse();
+
+        assertThat(
+                ServletUtils.isPrivateIPAddress("192.168.0.2")
+        )
+                .isTrue();
+
+    }
+
 }

@@ -1,6 +1,7 @@
 package me.jiangcai.lib.ee;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Stream;
 
 /**
  * @author CJ
@@ -51,6 +52,26 @@ public class ServletUtils {
             return ips[0].trim();
         }
         return request.getRemoteAddr();
+    }
+
+    /**
+     * @param ipAddress ip地址
+     * @return 是否为私有ip地址，或者说内网地址
+     * @since 1.4.1
+     */
+    public static boolean isPrivateIPAddress(String ipAddress) {
+        if ("localhost".equals(ipAddress))
+            return true;
+        if ("127.0.0.1".equals(ipAddress))
+            return true;
+        Integer[] i = Stream.of(ipAddress.split("\\."))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
+        if (i[0] == 10)
+            return true;
+        else if (i[0] == 172) {
+            return i[1] <= 31 && i[1] >= 16;
+        } else return i[0] == 192 && i[1] == 168;
     }
 
     /**
